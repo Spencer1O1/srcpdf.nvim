@@ -1,21 +1,22 @@
 # Scope
 
-This repo is the `.tex` ↔ PDF glue. [pdfreader.nvim](https://github.com/r-pletnev/pdfreader.nvim) is the viewer.
+This repo is source → PDF glue. The viewer is whatever the OS already uses for `.pdf` files. The plugin is `srcpdf.nvim`.
 
 ## What we build
 
-- Resolve `foo.tex` → sibling `foo.pdf` (and the reverse)
-- A keymap that toggles the current window between those two
-- Optionally compile the `.tex` before opening the PDF
-- Redraw the pdfreader buffer after a compile if the page is stale
+- Pair a source file with a sibling `.pdf` (same stem, same directory)
+- Open that PDF in the system viewer (`vim.ui.open`)
+- Stay in the source buffer
+- Optionally compile the source before opening (later)
+
+v1 source: `.tex`. Later sources (Markdown, …) are more entries in `sources`, not a new plugin.
 
 ## What we do not build
 
-- Rasterizing pages
-- Kitty / Sixel / Chafa display
-- Page next/prev, zoom, TOC, bookmarks (pdfreader)
-- A VimTeX replacement — if VimTeX is already compiling, we may only view/toggle
+- An in-terminal PDF renderer
+- pdfreader / Kitty / Ghostty / Chafa / ImageMagick integration
+- A VimTeX replacement
 
 ## Success
 
-From `main.tex`, one keymap shows `main.pdf` as a rendered page in the same window. The same keymap returns to the `.tex`.
+From `main.tex`, one keymap opens `main.pdf` in the native PDF viewer. Neovim stays on the `.tex`.

@@ -1,31 +1,34 @@
-# nvim-pdf
+# srcpdf.nvim
 
-Toggle the current window between a `.tex` file and its sibling `.pdf`. [pdfreader.nvim](https://github.com/r-pletnev/pdfreader.nvim) renders the PDF.
+Open the sibling `.pdf` of a source file in the system PDF viewer. Stay in the source buffer.
+
+v1 pairs `.tex`. Other sources (Markdown, …) are the same sibling rule: add their extension to `sources`.
 
 Does not compile. If the PDF is missing, it says so.
 
+The git checkout is still `~/nvim-pdf`. The plugin name is `srcpdf.nvim`.
+
 ## Install
+
+This repo is the plugin. The local consumer is `dotfiles/nvim/lua/spencerls/plugins/srcpdf.lua`.
 
 ```lua
 {
-  dir = "/home/spencerls/nvim-pdf", -- or "you/nvim-pdf" once this is a remote
-  name = "nvim-pdf",
-  dependencies = {
-    "r-pletnev/pdfreader.nvim",
-  },
+  dir = vim.fn.expand("~/nvim-pdf"),
+  name = "srcpdf.nvim",
   opts = {},
 }
 ```
 
-pdfreader needs snacks.nvim, Telescope, ImageMagick, Ghostscript, and poppler. Kitty or Ghostty for a real page.
+Uses `vim.ui.open` (`xdg-open` / `open` / Windows default). No Kitty, Ghostty, ImageMagick, or pdfreader.
 
 ## Usage
 
-- `:TexPdfToggle` from `foo.tex` or `foo.pdf`
-- Optional buffer-local keymap:
+Try `examples/hello.tex` (sibling `hello.pdf`).
+
+- `:PdfOpen` from a `.tex` file opens `hello.pdf` in the native viewer
+- Bind it yourself; the plugin does not set a keymap:
 
 ```lua
-require("nvim-pdf").setup({
-  keymap = "<leader>tp",
-})
+vim.keymap.set("n", "<leader>p", require("srcpdf").open, { desc = "Open sibling PDF" })
 ```

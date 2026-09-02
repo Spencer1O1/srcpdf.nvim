@@ -12,7 +12,7 @@ Yes, pdfreader is more established. That matters if we are *using* a plugin rath
 
 ## Actual UX we want
 
-A keymap that toggles the current window between `foo.tex` and `foo.pdf`.
+A keymap that toggles the current window between a source file (`foo.tex` now, later `foo.md`) and `foo.pdf`.
 
 Not a side-by-side preview. The `.tex` buffer goes away, the PDF view takes its place, and the same keymap brings the source back.
 

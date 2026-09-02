@@ -1,30 +1,25 @@
 # Architecture
 
 ```
-.tex ── compile (ours or VimTeX) ──► foo.pdf
-                                         │
-                         :e foo.pdf      ▼
-                                   pdfreader.nvim
-                                   (pages, zoom, TOC)
-
-same keymap: foo.pdf ──► :e foo.tex
+source ── compile (later) ──► foo.pdf
+                                 │
+                            vim.ui.open
+                                 ▼
+                         system PDF viewer
 ```
 
-We own the path + toggle + maybe compile. pdfreader owns everything that happens once a `.pdf` is the current buffer.
+We own the path + open + maybe compile. The OS owns viewing.
+
+`:PdfOpen` on a source file opens the sibling PDF and does not leave the source buffer. On a `.pdf` buffer it opens that file in the system viewer.
 
 ## Our layer
 
-1. **Pair** — from `foo.tex` find `foo.pdf`; from `foo.pdf` find `foo.tex`. Same stem, same directory, first slice.
-2. **Toggle** — `:e` the other file in the current window. Do not split.
-3. **Compile** — later or behind a second keymap. `latexmk` / `tectonic`, or call VimTeX if it is already there.
-4. **Refresh** — after compile, `:PDFReader redrawPage` if just `:e` shows a stale page.
-
-## Their layer
-
-pdfreader + snacks + ImageMagick + poppler. We do not reimplement this.
+1. **Pair** — configured source extensions (`sources`, v1: `tex`) ↔ sibling `.pdf`.
+2. **Open** — `vim.ui.open` on the PDF (`xdg-open`, `open`, or the Windows handler).
+3. **Compile** — later. Per-source (latexmk / tectonic, later pandoc).
 
 ## Later, not now
 
-- Multi-file projects where the output PDF is not the sibling (`main.pdf` vs `chapters/foo.tex`)
+- `"md"` in `sources`
+- Multi-file projects where the output PDF is not the sibling
 - SyncTeX
-- Side-by-side source + preview

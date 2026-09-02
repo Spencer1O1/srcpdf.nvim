@@ -1,11 +1,12 @@
-# nvim-pdf planning
+# srcpdf planning
 
-Glue: `.tex` ↔ sibling PDF. Viewer: [pdfreader.nvim](https://github.com/r-pletnev/pdfreader.nvim).
+Glue: source file → sibling PDF in the system viewer. Plugin name: `srcpdf.nvim`.
 
 | Doc | What it is |
 | --- | --- |
-| [scope.md](scope.md) | What we build vs what pdfreader owns |
-| [architecture.md](architecture.md) | Toggle, pair, compile, refresh |
-| [v1.md](v1.md) | First slice: toggle only |
-| [choice.md](choice.md) | Why pdfreader, not pdfbuffer / buffer-preview |
+| [scope.md](scope.md) | What we build vs what the OS viewer owns |
+| [architecture.md](architecture.md) | Pair, open, later compile |
+| [v1.md](v1.md) | First slice: open only |
+| [choice.md](choice.md) | Why we tried pdfreader, then dropped it |
 | [landscape.md](landscape.md) | Other PDF plugins |
+| [repos.md](repos.md) | Plugin vs consumer: srcpdf and dotfiles |
