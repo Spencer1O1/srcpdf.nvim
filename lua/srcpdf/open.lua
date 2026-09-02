@@ -16,11 +16,7 @@ end
 ---@param result vim.SystemCompleted
 local function after_compile(pdf, result)
 	if result.code ~= 0 then
-		local err = result.stderr
-		if err == nil or err == "" then
-			err = result.stdout or "compile failed"
-		end
-		notify.compile(notify.clip(err), vim.log.levels.ERROR)
+		notify.compile(notify.compile_error(result, pdf), vim.log.levels.ERROR)
 		return
 	end
 	if vim.fn.filereadable(pdf) == 0 then
