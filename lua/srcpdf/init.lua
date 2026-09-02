@@ -12,4 +12,8 @@ function M.open()
 	require("srcpdf.open").open()
 end
 
+function M.build()
+	require("srcpdf.open").build()
+end
+
 return M

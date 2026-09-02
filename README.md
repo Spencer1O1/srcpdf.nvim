@@ -1,9 +1,11 @@
 # srcpdf.nvim
 
-Turn the file you are writing into a PDF and open it.
+Turn the file you are writing into a PDF.
 
-`:PdfOpen` compiles the current buffer to `out/<stem>.pdf` and hands it to the
-system viewer. You keep editing the source — the PDF is just a preview.
+`:PdfOpen` builds `out/<stem>.pdf` if the source changed, then hands it to the
+system viewer. `:PdfBuild` does the same compile and leaves the viewer alone.
+From a `.pdf` buffer, `:PdfOpen` just opens that file. You keep editing the
+source — the PDF is just a preview.
 
 One command covers the usual PDF sources:
 
@@ -30,8 +32,8 @@ Requires Neovim 0.10+.
 }
 ```
 
-The plugin does not set a keymap. Bind `:PdfOpen` or `require("srcpdf").open()`
-yourself.
+The plugin does not set a keymap. Bind `:PdfOpen`, `:PdfBuild`, or the matching
+Lua functions yourself.
 
 ## Tools
 
@@ -55,11 +57,13 @@ there.
 
 From `notes.tex`, `notes.md`, or `notes.html`:
 
-1. `:PdfOpen` writes the buffer if it is modified
-2. Compiles into `out/`
-3. Opens `out/notes.pdf` with `vim.ui.open`
+1. `:PdfOpen` or `:PdfBuild` writes the buffer if it is modified
+2. Compiles into `out/` only if the source hash differs from the last build
+   (or the PDF is missing)
+3. `:PdfOpen` then opens `out/notes.pdf` with `vim.ui.open`
 
-If a compiler is missing, you get one warning and an install line. A leftover
+The last source hash is stored next to the PDF as `out/<stem>.srcsha`. If a
+compiler is missing, you get one warning and an install line. A stale leftover
 PDF is not opened.
 
 Examples: [`examples/hello.tex`](examples/hello.tex),
@@ -86,8 +90,10 @@ require("srcpdf").setup({
 
 | | |
 | --- | --- |
-| `:PdfOpen` | Compile (if needed) and open the PDF |
-| `require("srcpdf").open()` | Same |
+| `:PdfOpen` | Rebuild if the source changed, then open the PDF |
+| `:PdfBuild` | Rebuild if the source changed, without opening |
+| `require("srcpdf").open()` | Same as `:PdfOpen` |
+| `require("srcpdf").build()` | Same as `:PdfBuild` |
 | `require("srcpdf").pdf_path(path)` | `out/<stem>.pdf` for a source, or `path` if it is already a PDF |
 | `:checkhealth srcpdf` | Toolchain status |
 | `:help srcpdf` | Full help |

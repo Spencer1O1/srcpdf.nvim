@@ -3,8 +3,9 @@
 ==============================================================================
 INTRO							*srcpdf* *srcpdf.nvim*
 
-srcpdf.nvim compiles `.tex`, `.md`, or `.html` to `out/<stem>.pdf` and opens
-that file with |vim.ui.open|. Neovim stays on the source buffer.
+srcpdf.nvim compiles `.tex`, `.md`, or `.html` to `out/<stem>.pdf`. |:PdfOpen|
+then opens that file with |vim.ui.open|. |:PdfBuild| only compiles. Neovim
+stays on the source buffer.
 
 	.tex    latexmk / tectonic / pdflatex
 	.md     pandoc, then weasyprint (documentation, not math)
@@ -18,21 +19,31 @@ The plugin does not set a keymap.
 USAGE							*srcpdf-usage*
 
 							*:PdfOpen*
-:PdfOpen		Write the current buffer if it is modified, compile
-			into `outdir`, open the PDF. From a `.pdf` buffer,
-			open that file without compiling.
+:PdfOpen		Write the current buffer if it is modified. Compile
+			into `outdir` only if the source changed since the last
+			successful build (or the PDF is missing), then open
+			the PDF. From a `.pdf` buffer, open that file.
+
+							*:PdfBuild*
+:PdfBuild		Same rebuild check as |:PdfOpen|, without opening.
+			From a `.pdf` buffer, does nothing.
 
 							*srcpdf.open()*
 require("srcpdf").open()
 			Same as |:PdfOpen|.
+
+							*srcpdf.build()*
+require("srcpdf").build()
+			Same as |:PdfBuild|.
 
 							*srcpdf.pdf_path()*
 require("srcpdf").pdf_path({path})
 			Return `outdir/<stem>.pdf` for a configured source, or
 			{path} if it is already a PDF. Return `nil` otherwise.
 
-Missing tools produce one warning plus an install command. A leftover PDF is
-not opened.
+The last source hash is stored as `outdir/<stem>.srcsha`. Missing tools
+produce one warning plus an install command. A stale leftover PDF is not
+opened.
 
 Add `out/` to the project's `.gitignore`.
 

@@ -19,17 +19,29 @@ function M.is_source_ext(ext)
 	return false
 end
 
+local function output_path(path, ext, outdir)
+	outdir = outdir or config.get().outdir
+	return vim.fs.joinpath(
+		vim.fn.fnamemodify(path, ":h"),
+		outdir,
+		vim.fn.fnamemodify(path, ":t:r") .. ext
+	)
+end
+
 --- Absolute path of the generated PDF for this source.
 ---@param path string
 ---@param outdir? string
 ---@return string
 function M.output_pdf(path, outdir)
-	outdir = outdir or config.get().outdir
-	return vim.fs.joinpath(
-		vim.fn.fnamemodify(path, ":h"),
-		outdir,
-		vim.fn.fnamemodify(path, ":t:r") .. ".pdf"
-	)
+	return output_path(path, ".pdf", outdir)
+end
+
+--- Sidecar with the source sha256 from the last successful build.
+---@param path string
+---@param outdir? string
+---@return string
+function M.output_hash(path, outdir)
+	return output_path(path, ".srcsha", outdir)
 end
 
 --- PDF to open: `outdir/<stem>.pdf` for a source, or the file itself if it is a PDF.
