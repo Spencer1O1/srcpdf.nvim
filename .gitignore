@@ -1,3 +1,13 @@
 doc/tags
 *.swp
 .DS_Store
+*.code-workspace
+
+# Generated PDFs and compiler junk
+out/
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.toc

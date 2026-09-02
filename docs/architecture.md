@@ -1,25 +1,35 @@
 # Architecture
 
 ```
-source ── compile (later) ──► foo.pdf
-                                 │
-                            vim.ui.open
-                                 ▼
-                         system PDF viewer
+.tex   ── latexmk / tectonic / pdflatex ──┐
+.md    ── pandoc → HTML ──┐               ├──► out/foo.pdf
+.html  ───────────────────┴ weasyprint ───┘
+                                               │
+                                          vim.ui.open
+                                               ▼
+                                       system PDF viewer
 ```
 
-We own the path + open + maybe compile. The OS owns viewing.
+`.md` and `.html` are documentation. They never use a TeX engine.
 
-`:PdfOpen` on a source file opens the sibling PDF and does not leave the source buffer. On a `.pdf` buffer it opens that file in the system viewer.
+`:PdfOpen` writes the buffer, compiles into `out/`, then opens the PDF.
+Neovim stays on the source.
 
-## Our layer
+1. **Pair** — configured `sources` ↔ `out/<stem>.pdf`
+2. **Compile** — toolchain from the extension; PDF and aux files go in `out/`.
+   Missing tools: one warning + install command, then stop.
+3. **Open** — `vim.ui.open`
 
-1. **Pair** — configured source extensions (`sources`, v1: `tex`) ↔ sibling `.pdf`.
-2. **Open** — `vim.ui.open` on the PDF (`xdg-open`, `open`, or the Windows handler).
-3. **Compile** — later. Per-source (latexmk / tectonic, later pandoc).
-
-## Later, not now
-
-- `"md"` in `sources`
-- Multi-file projects where the output PDF is not the sibling
-- SyncTeX
+```
+lua/srcpdf/
+  init.lua          public API: setup, open, pdf_path
+  config.lua        options
+  pair.lua          source ↔ out/<stem>.pdf
+  notify.lua        user messages
+  open.lua          write → compile → viewer
+  compile/          plan a command by extension
+    tex.lua         LaTeX
+    docs.lua        Markdown / HTML
+    tools.lua       executable + install line
+  health.lua
+```

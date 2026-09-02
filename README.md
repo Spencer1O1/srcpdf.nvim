@@ -1,34 +1,100 @@
 # srcpdf.nvim
 
-Open the sibling `.pdf` of a source file in the system PDF viewer. Stay in the source buffer.
+Compile a `.tex`, `.md`, or `.html` file to `out/<stem>.pdf` and open it in the
+system PDF viewer. Neovim stays on the source.
 
-v1 pairs `.tex`. Other sources (Markdown, …) are the same sibling rule: add their extension to `sources`.
+| Source | Toolchain |
+| --- | --- |
+| `.tex` | latexmk, tectonic, or pdflatex |
+| `.md` | pandoc → HTML → weasyprint |
+| `.html` | weasyprint |
 
-Does not compile. If the PDF is missing, it says so.
+Markdown and HTML are for documentation. Math and papers stay in `.tex`.
 
-The git checkout is still `~/nvim-pdf`. The plugin name is `srcpdf.nvim`.
+Requires Neovim 0.10+.
 
 ## Install
 
-This repo is the plugin. The local consumer is `dotfiles/nvim/lua/spencerls/plugins/srcpdf.lua`.
+[lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
 {
-  dir = vim.fn.expand("~/nvim-pdf"),
-  name = "srcpdf.nvim",
+  "Spencer1O1/srcpdf.nvim",
+  ft = { "tex", "plaintex", "markdown", "html" },
   opts = {},
+  keys = {
+    { "<leader>p", function() require("srcpdf").open() end, desc = "Open PDF" },
+  },
 }
 ```
 
-Uses `vim.ui.open` (`xdg-open` / `open` / Windows default). No Kitty, Ghostty, ImageMagick, or pdfreader.
+The plugin does not set a keymap. Bind `:PdfOpen` or `require("srcpdf").open()`
+yourself.
+
+## Tools
+
+Install only what you compile. `:checkhealth srcpdf` reports what is missing
+and the install command.
+
+```bash
+# LaTeX
+sudo apt install latexmk texlive
+
+# Markdown + HTML
+sudo apt install pandoc weasyprint
+```
+
+On macOS, `brew install latexmk pandoc weasyprint` (plus a TeX distribution).
+
+Add `out/` to the project's `.gitignore`. Compiler junk and the PDF all land
+there.
 
 ## Usage
 
-Try `examples/hello.tex` (sibling `hello.pdf`).
+From `notes.tex`, `notes.md`, or `notes.html`:
 
-- `:PdfOpen` from a `.tex` file opens `hello.pdf` in the native viewer
-- Bind it yourself; the plugin does not set a keymap:
+1. `:PdfOpen` writes the buffer if it is modified
+2. Compiles into `out/`
+3. Opens `out/notes.pdf` with `vim.ui.open`
+
+If a compiler is missing, you get one warning and an install line. A leftover
+PDF is not opened.
+
+Examples: [`examples/hello.tex`](examples/hello.tex),
+[`examples/hello.md`](examples/hello.md),
+[`examples/hello.html`](examples/hello.html).
+
+## Setup
+
+`setup()` is optional. Defaults:
 
 ```lua
-vim.keymap.set("n", "<leader>p", require("srcpdf").open, { desc = "Open sibling PDF" })
+require("srcpdf").setup({
+  sources = { "tex", "md", "html", "htm" },
+  outdir = "out",
+})
 ```
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `sources` | `tex`, `md`, `html`, `htm` | Extensions that pair with `outdir/<stem>.pdf` |
+| `outdir` | `"out"` | Directory next to the source for the PDF and aux files |
+
+## Commands and API
+
+| | |
+| --- | --- |
+| `:PdfOpen` | Compile (if needed) and open the PDF |
+| `require("srcpdf").open()` | Same |
+| `require("srcpdf").pdf_path(path)` | `out/<stem>.pdf` for a source, or `path` if it is already a PDF |
+| `:checkhealth srcpdf` | Toolchain status |
+| `:help srcpdf` | Full help |
+
+## What this is not
+
+- An in-terminal PDF renderer
+- A VimTeX replacement
+- SyncTeX or multi-file project layout
+
+See [docs/architecture.md](docs/architecture.md) for the compile pipeline and
+module map.
