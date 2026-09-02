@@ -27,14 +27,15 @@ function M.plan(path, outdir)
 	local cfg = require("srcpdf.config").get()
 	outdir = outdir or cfg.outdir
 	local cwd = vim.fn.fnamemodify(path, ":h")
+	local out_abs = vim.fs.joinpath(cwd, outdir)
+	vim.fn.mkdir(out_abs, "p")
 	---@type srcpdf.CompileCtx
 	local ctx = {
 		cwd = cwd,
 		name = vim.fn.fnamemodify(path, ":t"),
-		outdir = outdir,
-		pdf = vim.fs.joinpath(outdir, vim.fn.fnamemodify(path, ":t:r") .. ".pdf"),
+		outdir = out_abs,
+		pdf = pair.output_pdf(path, outdir),
 	}
-	vim.fn.mkdir(vim.fs.joinpath(cwd, outdir), "p")
 
 	local ext = pair.extension(path)
 	if ext == "tex" then

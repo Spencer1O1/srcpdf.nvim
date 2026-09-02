@@ -1,15 +1,17 @@
 # srcpdf.nvim
 
-Compile a `.tex`, `.md`, or `.html` file to `out/<stem>.pdf` and open it in the
-system PDF viewer. Neovim stays on the source.
+Turn the file you are writing into a PDF and open it.
 
-| Source | Toolchain |
+`:PdfOpen` compiles the current buffer to `out/<stem>.pdf` and hands it to the
+system viewer. You keep editing the source — the PDF is just a preview.
+
+One command covers the usual PDF sources:
+
+| You write | srcpdf builds a PDF with |
 | --- | --- |
-| `.tex` | latexmk, tectonic, or pdflatex |
-| `.md` | pandoc → HTML → weasyprint |
-| `.html` | weasyprint |
-
-Markdown and HTML are for documentation. Math and papers stay in `.tex`.
+| `.tex` | latexmk, tectonic, or pdflatex (papers, math) |
+| `.md` | pandoc + weasyprint (documentation) |
+| `.html` | weasyprint (documentation) |
 
 Requires Neovim 0.10+.
 
